@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一言モチベーション名言ジェネレーター (Gemini版)</title>
+    <style>
+        :root {
+            --bg-color: #F0F4FF;
+            --main-color: #A3C1AD;
+            --accent-color: #D6E4FF;
+            --text-color: #4A4E69;
+            --white: #ffffff;
+            --card-bg: #FFFDF9;
+            --gemini-sparkle: #4285F4;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            background: linear-gradient(135deg, #FFF5F5 0%, #EEF2FF 100%);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(163, 193, 173, 0.3);
+            padding: 30px;
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            border: 4px solid #FFB7B2;
+            position: relative;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .settings-btn:hover {
+            opacity: 1;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #FF6B6B;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #7A869A;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #4A4A4A;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #FFDAC1;
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--text-color);
+            box-sizing: border-box;
+            background-color: #FFF;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #FFB7B2;
+            box-shadow: 0 0 8px rgba(255, 183, 178, 0.5);
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+            transition: transform 0.2s, opacity 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .generate-btn:disabled {
+            background: #CCC;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 設定モーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-save { background-color: #FF6B6B; color: white; }
+        .btn-close { background-color: #EEE; color: #333; }
+
+        /* 結果ボックス */
+        .result-box {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #FFF;
+            border-radius: 16px;
+            border: 2px dashed #FFB7B2;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #FF6B6B;
+            margin-bottom: 15px;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .quote-text {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .author-text {
+            font-size: 13px;
+            color: #777;
+            text-align: right;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .cheer-text {
+            font-size: 14px;
+            color: #6C5B7B;
+            background-color: #FFF0F5;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            text-align: left;
+        }
+
+        .lucky-item-box {
+            background-color: #E8F9FD;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #219F94;
+        }
+
+        .lucky-icon {
+            font-size: 24px;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .loading-sparkle {
+            display: inline-block;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="settings-btn" onclick="openModal()">⚙️</button>
+    
+    <h1>✨ 名言ジェネレーター ✨</h1>
+    <div class="subtitle">AIが心に響くエールを贈ります</div>
+
+    <div class="form-group">
+        <label for="mood-select">今のきぶんは？ 💭</label>
+        <select id="mood-select">
+            <option value="">-- 選択してください --</option>
+            <option value="疲れている">お疲れモード（疲れている）</option>
+            <option value="焦っている">そわそわ（焦っている）</option>
+            <option value="落ち込んでいる">しょんぼり（落ち込んでいる）</option>
+            <option value="やる気が出ない">だらだらしたい（やる気が出ない）</option>
+            <option value="イライラしている">ぷんぷん（イライラしている）</option>
+            <option value="ワクワク・活動的">新しいことに挑戦したい、モチベーションが高い気分</option>
+            <option value="憂鬱・リフレッシュしたい">なんとなく気分が晴れない、ポジティブな刺激がほしい</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="trouble-text">きょうの悩みや一言（自由入力） 📝</label>
+        <textarea id="trouble-text" placeholder="例：がんばりたいのに集中できない、なんとなく寂しい...など"></textarea>
+    </div>
+
+    <button class="generate-btn" id="submit-btn" onclick="generateWithGemini()">Geminiにエールをもらう！ ✨</button>
+    
+    <div class="loading" id="loading-box">
+        <span class="loading-sparkle">✨</span> Geminiが言葉を紡いでいます...
+    </div>
+
+    <!-- 出力エリア -->
+    <div class="result-box" id="result-box">
+        <div class="result-title">🌟 Geminiからの贈り物 🌟</div>
+        
+        <div class="quote-text" id="quote-text">「ここに名言が入ります」</div>
+        <div class="author-text" id="author-text">ー 偉人の名前</div>
+        
+        <div class="cheer-text" id="cheer-text">ここに短いエールが入ります。</div>
+        
+        <div class="lucky-item-box">
+            <span class="lucky-icon" id="lucky-icon">🍀</span>
+            <div>きょうのラッキーアイテム：<span id="lucky-item">???</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- API設定モーダル -->
+<div class="modal" id="settings-modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:#FF6B6B;">⚙️ Gemini APIの設定</h3>
+        <p style="font-size:12px; color:#666;">Google AI Studioで取得したGeminiのAPIキーを入力してください。キーはあなたのブラウザにのみ保存されます。</p>
+        <div class="form-group">
+            <label for="api-key-input">Gemini API Key:</label>
+            <input type="password" id="api-key-input" style="width:100%; padding:10px; border-radius:8px; border:2px solid #FFDAC1; box-sizing:border-box;" placeholder="AIzaSy...">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-small btn-close" onclick="closeModal()">閉じる</button>
+            <button class="btn-small btn-save" onclick="saveApiKey()">保存する</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ページ読み込み時にAPIキーをセット
+    window.onload = function() {
+        const savedKey = localStorage.getItem('gemini_api_key');
+        if (savedKey) {
+            document.getElementById('api-key-input').value = savedKey;
+        } else {
+            // キーがない場合はモーダルを開いて案内
+            openModal();
+        }
+    };
+
+    function openModal() { document.getElementById('settings-modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('settings-modal').style.display = 'none'; }
+
+    function saveApiKey() {
+        const key = document.getElementById('api-key-input').value.trim();
+        if (key) {
+            localStorage.setItem('gemini_api_key', key);
+            alert('APIキーを保存しました！✨');
+            closeModal();
+        } else {
+            localStorage.removeItem('gemini_api_key');
+            alert('APIキーをクリアしました。');
+        }
+    }
+
+    async function generateWithGemini() {
+        const apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) {
+            alert('右上の設定ボタン(⚙️)からGeminiのAPIキーを入力してください！🔑');
+            openModal();
+            return;
+        }
+
+        const mood = document.getElementById('mood-select').value;
+        const trouble = document.getElementById('trouble-text').value.trim();
+
+        if (!mood && !trouble) {
+            alert('「今のきぶん」を選ぶか、「きょうの悩み」を入力してね！💖');
+            return;
+        }
+
+        // 状態の初期化
+        const submitBtn = document.getElementById('submit-btn');
+        const loadingBox = document.getElementById('loading-box');
+        const resultBox = document.getElementById('result-box');
+        
+        submitBtn.disabled = true;
+        loadingBox.style.display = 'block';
+        resultBox.style.display = 'none';
+
+        // プロンプトの構築
+        const prompt = `あなたは心に寄り添う親切なモチベーションアドバイザーです。
+ユーザーの現在の状態：
+- 気分：${mood || '未選択'}
+- 悩みや一言：${trouble || '特になし'}
+
+この情報に基づいて、ユーザーが元気になれる「偉人や著名人の名言（または心に響く格言）」を1つ選び、それに対する「短い温かいエール」と、さらに「かわいいラッキーアイテム」を1つ提案してください。
+
+出力は必ず以下の有効なプレーンなJSON形式のみで返してください。マークダウンのコードブロック (\`\`\`json 等) は一切含めず、純粋なJSONオブジェクトテキストだけにしてください。鍵括弧やカンマの閉じ忘れがないように完全に有効なJSONにしてください。
+
+{
+  "quote": "名言の内容",
+  "author": "偉人・著名人の名前",
+  "cheer": "ユーザーに寄り添う、かわいらしくて元気が出る短いエールメッセージ（100文字程度）",
+  "lucky_item": "ラッキーアイテムの名前",
+  "lucky_icon": "ラッキーアイテムにぴったりな絵文字1文字"
+}`;
+
+        try {
+            // Gemini 1.5 Flash APIのエンドポイント (推奨モデル)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json"
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`APIエラーが発生しました (Status: ${response.status})`);
+            }
+
+            const data = await response.json();
+            
+            // Geminiのレスポンス構造からテキストを抽出
+            let jsonText = data.candidates[0].content.parts[0].text;
+            
+            // 万が一マークダウンブロックが含まれていた場合のトリミング
+            jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+            
+            const result = JSON.parse(jsonText);
+
+            // 画面に反映
+            document.getElementById('quote-text').innerText = `「${result.quote}」`;
+            document.getElementById('author-text').innerText = `ー ${result.author}`;
+            document.getElementById('cheer-text').innerText = result.cheer;
+            document.getElementById('lucky-item').innerText = result.lucky_item;
+            document.getElementById('lucky-icon').innerText = result.lucky_icon || '🍀';
+
+            // 結果表示
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        } catch (error) {
+            console.error(error);
+            alert('エラーが発生しちゃいました。APIキーが正しいか、または通信状態を確認してみてね！😥\nエラー内容: ' + error.message);
+        } finally {
+            submitBtn.disabled = false;
+            loadingBox.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
