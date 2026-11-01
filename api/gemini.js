@@ -6,6 +6,7 @@ export default async function handler(req, res) {
 
     const { mood } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
+    console.log("Key:"+apiKey;
     //const apiKey = "AQ.Ab8RN6IFVRyPHF_LJYF_hEukZk3TXtHTBB-BBL6Fb1g3L1hQKQ";
 
     if (!apiKey) {
