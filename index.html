@@ -266,7 +266,7 @@
 <body>
 
 <div class="container">
-    <button class="settings-btn" onclick="openModal()">⚙️</button>
+    <!--<button class="settings-btn" onclick="openModal()">⚙️</button>-->
     
     <h1>✨ 名言ジェネレーター ✨</h1>
     <div class="subtitle">AIが心に響くエールを贈ります</div>
@@ -358,7 +358,7 @@
     //}
 
     async function generateWithGemini() {
-        const apiKey = localStorage.getItem('gemini_api_key');
+        const apiKey = process.env.gemini_api_key;
         //if (!apiKey) {
         //    alert('右上の設定ボタン(⚙️)からGeminiのAPIキーを入力してください！🔑');
         //    openModal();
