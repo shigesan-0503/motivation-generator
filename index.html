@@ -359,11 +359,11 @@
 
     async function generateWithGemini() {
         const apiKey = localStorage.getItem('gemini_api_key');
-        if (!apiKey) {
-            alert('右上の設定ボタン(⚙️)からGeminiのAPIキーを入力してください！🔑');
-            openModal();
-            return;
-        }
+        //if (!apiKey) {
+        //    alert('右上の設定ボタン(⚙️)からGeminiのAPIキーを入力してください！🔑');
+        //    openModal();
+        //    return;
+        //}
 
         const mood = document.getElementById('mood-select').value;
         const trouble = document.getElementById('trouble-text').value.trim();
