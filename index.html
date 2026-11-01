@@ -313,6 +313,7 @@
 </div>
 
 <!-- API設定モーダル -->
+<!--
 <div class="modal" id="settings-modal">
     <div class="modal-content">
         <h3 style="margin-top:0; color:#FF6B6B;">⚙️ Gemini APIの設定</h3>
@@ -327,33 +328,34 @@
         </div>
     </div>
 </div>
+-->
 
 <script>
     // ページ読み込み時にAPIキーをセット
-    window.onload = function() {
-        const savedKey = localStorage.getItem('gemini_api_key');
-        if (savedKey) {
-            document.getElementById('api-key-input').value = savedKey;
-        } else {
-            // キーがない場合はモーダルを開いて案内
-            openModal();
-        }
-    };
+    //window.onload = function() {
+    //    const savedKey = localStorage.getItem('gemini_api_key');
+    //    if (savedKey) {
+    //        document.getElementById('api-key-input').value = savedKey;
+    //    } else {
+    //        // キーがない場合はモーダルを開いて案内
+    //        openModal();
+    //    }
+    //};
 
-    function openModal() { document.getElementById('settings-modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('settings-modal').style.display = 'none'; }
+    //function openModal() { document.getElementById('settings-modal').style.display = 'flex'; }
+    //function closeModal() { document.getElementById('settings-modal').style.display = 'none'; }
 
-    function saveApiKey() {
-        const key = document.getElementById('api-key-input').value.trim();
-        if (key) {
-            localStorage.setItem('gemini_api_key', key);
-            alert('APIキーを保存しました！✨');
-            closeModal();
-        } else {
-            localStorage.removeItem('gemini_api_key');
-            alert('APIキーをクリアしました。');
-        }
-    }
+    //function saveApiKey() {
+    //    const key = document.getElementById('api-key-input').value.trim();
+    //    if (key) {
+    //        localStorage.setItem('gemini_api_key', key);
+    //        alert('APIキーを保存しました！✨');
+    //        closeModal();
+    //    } else {
+    //        localStorage.removeItem('gemini_api_key');
+    //        alert('APIキーをクリアしました。');
+    //    }
+    //}
 
     async function generateWithGemini() {
         const apiKey = localStorage.getItem('gemini_api_key');
