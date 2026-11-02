@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     const prompt = `${mood}`;
     //const promptText = `私は今【たのしい】という気分です。この気分にぴったりな、元気が出る一言メッセージか、おすすめの過ごし方を50文字程度で優しく提案してください。`;
     console.log("Text:" + prompt);
-    console.log("URL:" + url);
+    console.log("prompt:" + prompt);
 
     try {
         const response = await fetch(url, {
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
         });
 
         const data = await response.json();
-        console.log("JSON:" + response.json());
+        console.log("JSON:" + data);
         
         if (!response.ok) {
             throw new Error(`APIエラーが発生しました (Status: ${response.status})`);
