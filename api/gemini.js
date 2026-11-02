@@ -26,13 +26,25 @@ export default async function handler(req, res) {
             })
         });
 
+        if (!response.ok) {
+            throw new Error(`APIエラーが発生しました (Status: ${response.status})`);
+        }
+
         const data = await response.json();
+            
+        // Geminiのレスポンス構造からテキストを抽出
+        let jsonText = data.candidates[0].content.parts[0].text;
+            
+        // 万が一マークダウンブロックが含まれていた場合のトリミング
+        jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+            
+        const result = JSON.parse(jsonText);
         
         if (response.ok) {
             const reply = data.candidates.content.parts.text;
-            return res.status(200).json({ reply: reply });
+            return res.status(200).json({ reply: result });
         } else {
-            return res.status(500).json({ error: data.error.message });
+            return res.status(500).json({ error: result.error.message });
         }
     } catch (error) {
         return res.status(500).json({ error: 'サーバー内部でエラーが発生しました。' });
