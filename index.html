@@ -351,12 +351,7 @@
             const response = await fetch('/api/gemini', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: {
-                        responseMimeType: "application/json"
-                    }
-                })
+                body: JSON.stringify({ mood: prompt })
             });
 
             if (!response.ok) {
