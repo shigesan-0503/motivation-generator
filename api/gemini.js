@@ -31,6 +31,7 @@ export default async function handler(req, res) {
         }
 
         const data = await response.json();
+        console.log("Text:" + data);
             
         // Geminiのレスポンス構造からテキストを抽出
         let jsonText = data.candidates[0].content.parts[0].text;
@@ -39,7 +40,7 @@ export default async function handler(req, res) {
         jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
             
         const result = JSON.parse(jsonText);
-        
+        console.log("result:" + result);
         if (response.ok) {
             const reply = data.candidates.content.parts.text;
             return res.status(200).json({ reply: result });
