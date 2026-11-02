@@ -266,7 +266,7 @@
 <body>
 
 <div class="container">
-    <!--<button class="settings-btn" onclick="openModal()">⚙️</button>-->
+    <button class="settings-btn" onclick="openModal()">⚙️</button>
     
     <h1>✨ 名言ジェネレーター ✨</h1>
     <div class="subtitle">AIが心に響くエールを贈ります</div>
@@ -311,8 +311,58 @@
         </div>
     </div>
 </div>
+
+<!-- API設定モーダル -->
+<div class="modal" id="settings-modal">
+    <div class="modal-content">
+        <h3 style="margin-top:0; color:#FF6B6B;">⚙️ Gemini APIの設定</h3>
+        <p style="font-size:12px; color:#666;">Google AI Studioで取得したGeminiのAPIキーを入力してください。キーはあなたのブラウザにのみ保存されます。</p>
+        <div class="form-group">
+            <label for="api-key-input">Gemini API Key:</label>
+            <input type="password" id="api-key-input" style="width:100%; padding:10px; border-radius:8px; border:2px solid #FFDAC1; box-sizing:border-box;" placeholder="AIzaSy...">
+        </div>
+        <div class="modal-buttons">
+            <button class="btn-small btn-close" onclick="closeModal()">閉じる</button>
+            <button class="btn-small btn-save" onclick="saveApiKey()">保存する</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // ページ読み込み時にAPIキーをセット
+    window.onload = function() {
+        const savedKey = localStorage.getItem('gemini_api_key');
+        if (savedKey) {
+            document.getElementById('api-key-input').value = savedKey;
+        } else {
+            // キーがない場合はモーダルを開いて案内
+            openModal();
+        }
+    };
+
+    function openModal() { document.getElementById('settings-modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('settings-modal').style.display = 'none'; }
+
+    function saveApiKey() {
+        const key = document.getElementById('api-key-input').value.trim();
+        if (key) {
+            localStorage.setItem('gemini_api_key', key);
+            alert('APIキーを保存しました！✨');
+            closeModal();
+        } else {
+            localStorage.removeItem('gemini_api_key');
+            alert('APIキーをクリアしました。');
+        }
+    }
+
     async function generateWithGemini() {
+        const apiKey = localStorage.getItem('gemini_api_key');
+        if (!apiKey) {
+            alert('右上の設定ボタン(⚙️)からGeminiのAPIキーを入力してください！🔑');
+            openModal();
+            return;
+        }
+
         const mood = document.getElementById('mood-select').value;
         const trouble = document.getElementById('trouble-text').value.trim();
 
