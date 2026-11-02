@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         console.log("jsonText:" + jsonText);
         
         if (response.ok) {
-            return res.status(200).json({ reply: jsonText });
+            return res.status(200).json({ reply: JSON.parse(jsonText) });
         } else {
             return res.status(500).json({ error: result.error.message });
         }
