@@ -30,8 +30,6 @@ export default async function handler(req, res) {
         });
 
         const data = await response.json();
-        console.log("response:" + JSON.parse(data));
-        
         if (!response.ok) {
             throw new Error(`APIエラーが発生しました (Status: ${response.status})`);
         }
