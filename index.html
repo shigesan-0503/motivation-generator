@@ -367,6 +367,7 @@
             //jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
             
             const result = JSON.parse(data);
+            console.log( "result:" + result );
 
             // 画面に反映
             document.getElementById('quote-text').innerText = `「${result.quote}」`;
