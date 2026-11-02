@@ -15,6 +15,7 @@ export default async function handler(req, res) {
     const prompt = `${mood}`;
     //const promptText = `私は今【たのしい】という気分です。この気分にぴったりな、元気が出る一言メッセージか、おすすめの過ごし方を50文字程度で優しく提案してください。`;
     console.log("Text:" + prompt);
+    console.log("URL:" + url);
 
     try {
         const response = await fetch(url, {
@@ -28,10 +29,12 @@ export default async function handler(req, res) {
             })
         });
 
+        const data = await response.json();
+        console.log("response:" + JSON.parse(data);
+        
         if (!response.ok) {
             throw new Error(`APIエラーが発生しました (Status: ${response.status})`);
         }
-        const data = await response.json();
         // Geminiのレスポンス構造からテキストを抽出
         let jsonText = data.candidates[0].content.parts[0].text;
         console.log("jsonText:" + jsonText);
