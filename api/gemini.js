@@ -48,6 +48,7 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: result.error.message });
         }
     } catch (error) {
+        console.log("error:" + error);
         return res.status(500).json({ error: 'サーバー内部でエラーが発生しました。' });
     }
 }
