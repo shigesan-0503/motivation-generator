@@ -31,10 +31,10 @@ export default async function handler(req, res) {
         }
 
         const data = await response.json();
-        console.log("Text:" + data);
             
         // Geminiのレスポンス構造からテキストを抽出
         let jsonText = data.candidates[0].content.parts[0].text;
+        console.log("jsonText:" + jsonText);
             
         // 万が一マークダウンブロックが含まれていた場合のトリミング
         jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
