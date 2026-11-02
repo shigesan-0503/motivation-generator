@@ -366,12 +366,12 @@
             const data = await response.json();
             
             // Geminiのレスポンス構造からテキストを抽出
-            let jsonText = data.candidates[0].content.parts[0].text;
+            //let jsonText = data.candidates[0].content.parts[0].text;
             
             // 万が一マークダウンブロックが含まれていた場合のトリミング
-            jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+            //jsonText = jsonText.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
             
-            const result = JSON.parse(jsonText);
+            const result = JSON.parse(data);
 
             // 画面に反映
             document.getElementById('quote-text').innerText = `「${result.quote}」`;
