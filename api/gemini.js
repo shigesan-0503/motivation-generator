@@ -29,14 +29,13 @@ export default async function handler(req, res) {
         if (!response.ok) {
             throw new Error(`APIエラーが発生しました (Status: ${response.status})`);
         }
-
         const data = await response.json();
-            
         // Geminiのレスポンス構造からテキストを抽出
         let jsonText = data.candidates[0].content.parts[0].text;
-        const result = JSON.parse(jsonText);
+        console.log("jsonText:" + jsonText);
+        
         if (response.ok) {
-            return res.status(200).json({ reply: result });
+            return res.status(200).json({ reply: jsonText });
         } else {
             return res.status(500).json({ error: result.error.message });
         }
